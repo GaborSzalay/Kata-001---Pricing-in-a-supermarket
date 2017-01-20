@@ -22,4 +22,11 @@ public class Price {
         return currency;
     }
 
+    public Price multiply(final Double multiplier) {
+        return new Price(amount * multiplier, currency);
+    }
+
+    public void add(final Price addition) {
+        this.amount += addition.getAmount();
+    }
 }
