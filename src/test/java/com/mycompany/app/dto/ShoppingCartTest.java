@@ -1,4 +1,6 @@
-package com.mycompany.app;
+package com.mycompany.app.dto;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,21 +9,28 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.mycompany.app.dto.Price;
-import com.mycompany.app.dto.ShoppingCart;
-
 /**
  * Created by Krisztian_Papp on 1/13/2017.
  */
 @Test
-public class ShoppingTest {
+public class ShoppingCartTest {
 
     private ShoppingCart underTest;
 
-
     @BeforeMethod
     public void setUp() {
-        underTest = new ShoppingCart(setupCartItemInput(), setupPriceItemInput());
+        underTest = new ShoppingCart(setupCartItemInput(), setupPriceItemInput(), setupDiscountInput());
+    }
+
+    @Test
+    public void testGetDiscountListSize() {
+        assertEquals(underTest.getDiscountList().size(), 1);
+    }
+
+    @Test
+    public void testGetDiscountListContent() throws Exception {
+        assertEquals(underTest.getDiscountList().get(0).getItemName(), "orange juice");
+        assertEquals(underTest.getDiscountList().get(0).getDiscountType(), DiscountType.THREEFORTWO);
     }
 
     @Test
@@ -29,6 +38,13 @@ public class ShoppingTest {
         Price totalPrice = underTest.getTotalPrice();
         Assert.assertEquals(totalPrice.getAmount(), 51.95D);
         Assert.assertEquals(totalPrice.getCurrency(), "EUR");
+    }
+
+    @Test
+    public void testGetDiscountedPrice() {
+        DiscountedPrice discountedPrice = underTest.getDiscountedPrice();
+        assertEquals(discountedPrice.getTotal(), new Price(51.95D, "EUR"));
+        assertEquals(discountedPrice.getDiscountedTotal(), new Price(50.45D, "EUR"));
     }
 
     private List<String> setupCartItemInput() {
@@ -51,6 +67,14 @@ public class ShoppingTest {
         result.add("orange juice - 1.5 EUR / piece");
         result.add("pasta - 1.2 EUR / piece");
         result.add("chicken breast - 5.3 EUR / kg");
+
+        return result;
+    }
+
+    private List<String> setupDiscountInput() {
+        List<String> result = new ArrayList<>();
+
+        result.add("orange juice - threefortwo");
 
         return result;
     }

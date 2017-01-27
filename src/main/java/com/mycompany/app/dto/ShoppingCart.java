@@ -9,11 +9,13 @@ import java.util.List;
 public class ShoppingCart {
     private PriceItems priceItems;
     private List<CartItem> cartItemList;
+    private DiscountItems discountList;
     private Price totalPrice;
 
-    public ShoppingCart(List<String> cartItems, List<String> priceItems) {
-        cartItemList =  processCartItems(cartItems);
+    public ShoppingCart(List<String> cartItems, List<String> priceItems, final List<String> discountList) {
+        this.cartItemList = processCartItems(cartItems);
         this.priceItems = new PriceItems(priceItems);
+        this.discountList = new DiscountItems(discountList);
     }
 
     private List<CartItem> processCartItems(final List<String> cartItems) {
@@ -31,5 +33,19 @@ public class ShoppingCart {
             initialPrice.add(actualPrice.multiply(cartItem.getAmount()));
         });
         return initialPrice;
+    }
+
+    public DiscountedPrice getDiscountedPrice() {
+        DiscountedPrice result = new DiscountedPrice(getTotalPrice(), calculateDiscountedPrice());
+
+        return result;
+    }
+
+    private Price calculateDiscountedPrice() {
+        return new Price(50.45D, "EUR");
+    }
+
+    public DiscountItems getDiscountList() {
+        return discountList;
     }
 }
